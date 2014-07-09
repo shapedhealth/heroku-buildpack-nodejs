@@ -83,6 +83,18 @@ elif test -d $cache_dir/node/node_modules; then
 
 fi
 
+# Scope config var availability only to `npm install`
+(
+  if [ -d "$env_dir" ]; then
+    status "Exporting config vars to environment"
+    export_env_dir $env_dir
+  fi
+
+  status "Installing npm dependencies"
+  # Make npm output to STDOUT instead of its default STDERR
+  npm install --userconfig $build_dir/.npmrc 2>&1 | indent
+)
+
 # Install bower_components
 if test -d $cache_dir/node/bower_components; then
   status "Restoring bower_components directory from cache"
@@ -95,18 +107,6 @@ fi
 # build assets
 status "Running grunt build script"
 grunt
-
-# Scope config var availability only to `npm install`
-(
-  if [ -d "$env_dir" ]; then
-    status "Exporting config vars to environment"
-    export_env_dir $env_dir
-  fi
-
-  status "Installing dependencies"
-  # Make npm output to STDOUT instead of its default STDERR
-  npm install --userconfig $build_dir/.npmrc --production 2>&1 | indent
-)
 
 # Persist goodies like node-version in the slug
 mkdir -p $build_dir/.heroku
@@ -125,6 +125,9 @@ if test -d $build_dir/node_modules; then
   status "Caching node_modules directory for future builds"
   cp -r $build_dir/node_modules $cache_dir/node
 fi
+
+# Prune node_modules for production
+npm prune --production 2>&1 | indent
 
 # If app has a bower_compnents directory, cache it
 if test -d $build_dir/public/bower_components; then
