@@ -106,7 +106,7 @@ fi
 
 # build assets
 status "Running grunt build script"
-grunt
+grunt 2>&1 | indent
 
 # Persist goodies like node-version in the slug
 mkdir -p $build_dir/.heroku
@@ -127,6 +127,7 @@ if test -d $build_dir/node_modules; then
 fi
 
 # Prune node_modules for production
+status "pruning node_modules that are not needed for production"
 npm prune --production 2>&1 | indent
 
 # If app has a bower_compnents directory, cache it
