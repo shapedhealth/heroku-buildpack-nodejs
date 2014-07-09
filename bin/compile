@@ -56,6 +56,10 @@ PATH=$build_dir/vendor/node/bin:$PATH
 status "Installing bower from npm"
 npm install -g bower 2>&1 | indent
 
+# install grunt
+status "installing grunt-cli from npm"
+npm install -g grunt-cli 2>&1 | indent
+
 # Run subsequent node/npm commands from the build path
 cd $build_dir
 
@@ -87,6 +91,10 @@ if test -d $cache_dir/node/bower_components; then
   status "Updating bower_components"
   bower install 2>&1 | indent
 fi
+
+# build assets
+status "Running grunt build script"
+grunt
 
 # Scope config var availability only to `npm install`
 (
