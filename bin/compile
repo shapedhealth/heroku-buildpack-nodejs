@@ -53,12 +53,20 @@ chmod +x $build_dir/vendor/node/bin/*
 PATH=$build_dir/vendor/node/bin:$PATH
 
 # Install bower
-status "Installing bower from npm"
-npm install -g bower 2>&1 | indent
+if (( $(npm ls -g | grep bower@ | wc -l) == 1)); then
+  status "Using cached bower"
+else
+  status "Installing bower from npm"
+  npm install -g bower 2>&1 | indent
+fi
 
 # install grunt
-status "installing grunt-cli from npm"
-npm install -g grunt-cli 2>&1 | indent
+if (( $(npm ls -g | grep grunt-cli@ | wc -l) == 1)); then
+  status "Using cached grunt"
+else
+  status "installing grunt-cli from npm"
+  npm install -g grunt-cli 2>&1 | indent
+fi
 
 # Run subsequent node/npm commands from the build path
 cd $build_dir
