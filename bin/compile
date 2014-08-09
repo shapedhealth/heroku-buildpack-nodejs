@@ -115,7 +115,7 @@ fi
 
 # build assets
 status "Running grunt build script"
-grunt 2>&1 | indent
+grunt deploy 2>&1 | indent
 
 # Persist goodies like node-version in the slug
 mkdir -p $build_dir/.heroku
